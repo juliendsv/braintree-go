@@ -2,17 +2,18 @@ package braintree
 
 import (
 	"encoding/xml"
+	"github.com/lionelbarrow/braintree-go/date"
 )
 
 type Disbursement struct {
 	XMLName            xml.Name         `xml:"disbursement"`
 	Id                 string           `xml:"id"`
 	ExceptionMessage   string           `xml:"exception-message"`
-	DisbursementDate   string           `xml:"disbursement-date"`
+	DisbursementDate   *date.Date       `xml:"disbursement-date"`
 	FollowUpAction     string           `xml:"follow-up-action"`
 	Success            bool             `xml:"success"`
 	Retry              bool             `xml:"retry"`
-	Amount             float64          `xml:"amount"`
+	Amount             *Decimal         `xml:"amount"`
 	MerchantAccount    *MerchantAccount `xml:"merchant-account"`
 	CurrencyIsoCode    string           `xml:"currency-iso-code"`
 	SubmerchantAccount bool             `xml:"sub-merchant-account"`

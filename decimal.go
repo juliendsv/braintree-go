@@ -28,6 +28,9 @@ func (d *Decimal) MarshalText() (text []byte, err error) {
 		b.WriteString(strings.Repeat("0", -d.Scale))
 	} else {
 		str := strconv.FormatInt(d.Unscaled, 10)
+		if len(str) < d.Scale {
+			str = strings.Repeat("0", d.Scale) + str
+		}
 		b.WriteString(str[:len(str)-d.Scale])
 		b.WriteString(".")
 		b.WriteString(str[len(str)-d.Scale:])
@@ -44,6 +47,10 @@ func (d *Decimal) UnmarshalText(text []byte) (err error) {
 		scale    int   = 0
 	)
 
+	if str == "" {
+		return nil
+	}
+
 	if i := strings.Index(str, "."); i != -1 {
 		scale = len(str) - i - 1
 		str = strings.Replace(str, ".", "", 1)
@@ -57,4 +64,43 @@ func (d *Decimal) UnmarshalText(text []byte) (err error) {
 	d.Scale = scale
 
 	return nil
+}
+
+// Cmp compares x and y and returns:
+//
+//   -1 if x <  y
+//    0 if x == y
+//   +1 if x >  y
+//
+func (x *Decimal) Cmp(y *Decimal) int {
+	xUnscaled, yUnscaled := x.Unscaled, y.Unscaled
+	xScale, yScale := x.Scale, y.Scale
+
+	for ; xScale > yScale; xScale-- {
+		yUnscaled = yUnscaled * 10
+	}
+
+	for ; yScale > xScale; yScale-- {
+		xUnscaled = xUnscaled * 10
+	}
+
+	switch {
+	case xUnscaled < yUnscaled:
+		return -1
+	case xUnscaled > yUnscaled:
+		return 1
+	default:
+		return 0
+	}
+}
+
+// String returns string representation of Decimal
+func (d *Decimal) String() string {
+	b, err := d.MarshalText()
+
+	if err != nil {
+		panic(err) //should never happen (see: MarshalText)
+	}
+
+	return string(b)
 }

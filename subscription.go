@@ -1,5 +1,7 @@
 package braintree
 
+import "github.com/lionelbarrow/braintree-go/nullable"
+
 const (
 	SubscriptionStatusActive       = "Active"
 	SubscriptionStatusCanceled     = "Canceled"
@@ -12,7 +14,7 @@ const (
 type Subscription struct {
 	XMLName                 string               `xml:"subscription"`
 	Id                      string               `xml:"id,omitempty"`
-	Balance                 float64              `xml:"balance,omitempty"`
+	Balance                 *Decimal             `xml:"balance,omitempty"`
 	BillingDayOfMonth       string               `xml:"billing-day-of-month,omitempty"`
 	BillingPeriodEndDate    string               `xml:"billing-period-end-date,omitempty"`
 	BillingPeriodStartDate  string               `xml:"billing-period-start-date,omitempty"`
@@ -22,19 +24,19 @@ type Subscription struct {
 	FailureCount            string               `xml:"failure-count,omitempty"`
 	FirstBillingDate        string               `xml:"first-billing-date,omitempty"`
 	MerchantAccountId       string               `xml:"merchant-account-id,omitempty"`
-	NeverExpires            string               `xml:"never-expires,omitempty"` // bool
-	NextBillAmount          float64              `xml:"next-bill-amount,omitempty"`
-	NextBillingPeriodAmount float64              `xml:"next-billing-period-amount,omitempty"`
+	NeverExpires            *nullable.NullBool   `xml:"never-expires,omitempty"`
+	NextBillAmount          *Decimal             `xml:"next-bill-amount,omitempty"`
+	NextBillingPeriodAmount *Decimal             `xml:"next-billing-period-amount,omitempty"`
 	NextBillingDate         string               `xml:"next-billing-date,omitempty"`
-	NumberOfBillingCycles   string               `xml:"number-of-billing-cycles,omitempty"` // int
+	NumberOfBillingCycles   *nullable.NullInt64  `xml:"number-of-billing-cycles,omitempty"`
 	PaidThroughDate         string               `xml:"paid-through-date,omitempty"`
 	PaymentMethodToken      string               `xml:"payment-method-token,omitempty"`
 	PlanId                  string               `xml:"plan-id,omitempty"`
-	Price                   float64              `xml:"price,omitempty"`
+	Price                   *Decimal             `xml:"price,omitempty"`
 	Status                  string               `xml:"status,omitempty"`
 	TrialDuration           string               `xml:"trial-duration,omitempty"`
 	TrialDurationUnit       string               `xml:"trial-duration-unit,omitempty"`
-	TrialPeriod             string               `xml:"trial-period,omitempty"` // bool
+	TrialPeriod             *nullable.NullBool   `xml:"trial-period,omitempty"`
 	Transactions            *Transactions        `xml:"transactions,omitempty"`
 	Options                 *SubscriptionOptions `xml:"options,omitempty"`
 	// AddOns                  []interface{} `xml:"add-ons,omitempty"`
@@ -44,8 +46,6 @@ type Subscription struct {
 type Subscriptions struct {
 	Subscription []*Subscription `xml:"subscription"`
 }
-
-// TODO(eaigner): same considerations apply as with plan type marshalling
 
 type SubscriptionOptions struct {
 	DoNotInheritAddOnsOrDiscounts        bool `xml:"do-not-inherit-add-ons-or-discounts,omitempty"`

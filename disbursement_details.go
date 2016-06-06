@@ -2,14 +2,15 @@ package braintree
 
 import (
 	"encoding/xml"
+	"github.com/lionelbarrow/braintree-go/nullable"
 )
 
 type DisbursementDetails struct {
-	XMLName                        xml.Name `xml:"disbursement-details"`
-	DisbursementDate               string   `xml:"disbursement-date"`
-	SettlementAmount               string   `xml:"settlement-amount"` // float64
-	SettlementCurrencyIsoCode      string   `xml:"settlement-currency-iso-code"`
-	SettlementCurrencyExchangeRate string   `xml:"settlement-currency-exchange-rate"` // float64
-	FundsHeld                      string   `xml:"funds-held"`                        // bool
-	Success                        string   `xml:"success"`                           // bool
+	XMLName                        xml.Name           `xml:"disbursement-details"`
+	DisbursementDate               string             `xml:"disbursement-date"`
+	SettlementAmount               *Decimal           `xml:"settlement-amount"`
+	SettlementCurrencyIsoCode      string             `xml:"settlement-currency-iso-code"`
+	SettlementCurrencyExchangeRate *Decimal           `xml:"settlement-currency-exchange-rate"`
+	FundsHeld                      *nullable.NullBool `xml:"funds-held"`
+	Success                        *nullable.NullBool `xml:"success"`
 }

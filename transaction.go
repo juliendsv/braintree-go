@@ -1,35 +1,44 @@
 package braintree
 
+import (
+	"github.com/lionelbarrow/braintree-go/nullable"
+	"time"
+)
+
 type Transaction struct {
-	XMLName             string               `xml:"transaction"`
-	Id                  string               `xml:"id,omitempty"`
-	CustomerID          string               `xml:"customer-id,omitempty"`
-	Status              string               `xml:"status,omitempty"`
-	Type                string               `xml:"type,omitempty"`
-	Amount              *Decimal             `xml:"amount"`
-	OrderId             string               `xml:"order-id,omitempty"`
-	PaymentMethodToken  string               `xml:"payment-method-token,omitempty"`
-	MerchantAccountId   string               `xml:"merchant-account-id,omitempty"`
-	PlanId              string               `xml:"plan-id,omitempty"`
-	CreditCard          *CreditCard          `xml:"credit-card,omitempty"`
-	Customer            *Customer            `xml:"customer,omitempty"`
-	BillingAddress      *Address             `xml:"billing,omitempty"`
-	ShippingAddress     *Address             `xml:"shipping,omitempty"`
-	Options             *TransactionOptions  `xml:"options,omitempty"`
-	ServiceFeeAmount    *Decimal             `xml:"service-fee-amount,attr,omitempty"`
-	CreatedAt           string               `xml:"created-at,omitempty"`
-	UpdatedAt           string               `xml:"updated-at,omitempty"`
-	DisbursementDetails *DisbursementDetails `xml:"disbursement-details,omitempty"`
+	XMLName                    string               `xml:"transaction"`
+	Id                         string               `xml:"id,omitempty"`
+	CustomerID                 string               `xml:"customer-id,omitempty"`
+	Status                     string               `xml:"status,omitempty"`
+	Type                       string               `xml:"type,omitempty"`
+	Amount                     *Decimal             `xml:"amount"`
+	OrderId                    string               `xml:"order-id,omitempty"`
+	PaymentMethodToken         string               `xml:"payment-method-token,omitempty"`
+	PaymentMethodNonce         string               `xml:"payment-method-nonce,omitempty"`
+	MerchantAccountId          string               `xml:"merchant-account-id,omitempty"`
+	PlanId                     string               `xml:"plan-id,omitempty"`
+	CreditCard                 *CreditCard          `xml:"credit-card,omitempty"`
+	Customer                   *Customer            `xml:"customer,omitempty"`
+	BillingAddress             *Address             `xml:"billing,omitempty"`
+	ShippingAddress            *Address             `xml:"shipping,omitempty"`
+	Options                    *TransactionOptions  `xml:"options,omitempty"`
+	ServiceFeeAmount           *Decimal             `xml:"service-fee-amount,attr,omitempty"`
+	CreatedAt                  *time.Time           `xml:"created-at,omitempty"`
+	UpdatedAt                  *time.Time           `xml:"updated-at,omitempty"`
+	DisbursementDetails        *DisbursementDetails `xml:"disbursement-details,omitempty"`
+	RefundId                   string               `xml:"refund-id,omitempty"`
+	RefundIds                  *[]string            `xml:"refund-ids>item,omitempty"`
+	RefundedTransactionId      *string              `xml:"refunded-transaction-id,omitempty"`
+	ProcessorResponseCode      int                  `xml:"processor-response-code,omitempty"`
+	ProcessorResponseText      string               `xml:"processor-response-text,omitempty"`
+	ProcessorAuthorizationCode string               `xml:"processor-authorization-code,omitempty"`
+	SettlementBatchId          string               `xml:"settlement-batch-id,omitempty"`
 }
 
 // TODO: not all transaction fields are implemented yet, here are the missing fields (add on demand)
 //
 // <transaction>
 //   <currency-iso-code>USD</currency-iso-code>
-//   <refund-id nil="true"></refund-id>
-//   <refund-ids type="array"/>
-//   <refunded-transaction-id nil="true"></refunded-transaction-id>
-//   <settlement-batch-id>2013-10-08_49grybq7pbtsnvsr</settlement-batch-id>
 //   <custom-fields>
 //   </custom-fields>
 //   <avs-error-response-code nil="true"></avs-error-response-code>
@@ -37,9 +46,6 @@ type Transaction struct {
 //   <avs-street-address-response-code>I</avs-street-address-response-code>
 //   <cvv-response-code>I</cvv-response-code>
 //   <gateway-rejection-reason nil="true"></gateway-rejection-reason>
-//   <processor-authorization-code>YCSBWR</processor-authorization-code>
-//   <processor-response-code>1000</processor-response-code>
-//   <processor-response-text>Approved</processor-response-text>
 //   <voice-referral-number nil="true"></voice-referral-number>
 //   <purchase-order-number nil="true"></purchase-order-number>
 //   <tax-amount nil="true"></tax-amount>
@@ -96,9 +102,9 @@ type TransactionOptions struct {
 }
 
 type TransactionSearchResult struct {
-	XMLName           string         `xml:"credit-card-transactions"`
-	CurrentPageNumber string         `xml:"current-page-number"` // int
-	PageSize          string         `xml:"page-size"`           // int
-	TotalItems        string         `xml:"total-items"`         // int
-	Transactions      []*Transaction `xml:"transaction"`
+	XMLName           string              `xml:"credit-card-transactions"`
+	CurrentPageNumber *nullable.NullInt64 `xml:"current-page-number"`
+	PageSize          *nullable.NullInt64 `xml:"page-size"`
+	TotalItems        *nullable.NullInt64 `xml:"total-items"`
+	Transactions      []*Transaction      `xml:"transaction"`
 }

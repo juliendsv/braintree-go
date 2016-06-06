@@ -16,23 +16,24 @@ type errorGroup interface {
 	On(string) []FieldError
 }
 
-type braintreeError struct {
+type BraintreeError struct {
 	statusCode      int
 	XMLName         string           `xml:"api-error-response"`
 	Errors          responseErrors   `xml:"errors"`
 	ErrorMessage    string           `xml:"message"`
 	MerchantAccount *MerchantAccount `xml:",omitempty"`
+	Transaction     Transaction      `xml:"transaction"`
 }
 
-func (e *braintreeError) Error() string {
+func (e *BraintreeError) Error() string {
 	return e.ErrorMessage
 }
 
-func (e *braintreeError) StatusCode() int {
+func (e *BraintreeError) StatusCode() int {
 	return e.statusCode
 }
 
-func (e *braintreeError) All() []FieldError {
+func (e *BraintreeError) All() []FieldError {
 	baseErrors := e.Errors.TransactionErrors.ErrorList.Errors
 	creditCardErrors := e.Errors.TransactionErrors.CreditCardErrors.ErrorList.Errors
 	customerErrors := e.Errors.TransactionErrors.CustomerErrors.ErrorList.Errors
@@ -41,7 +42,7 @@ func (e *braintreeError) All() []FieldError {
 	return allErrors
 }
 
-func (e *braintreeError) For(item string) errorGroup {
+func (e *BraintreeError) For(item string) errorGroup {
 	switch item {
 	default:
 		return nil
@@ -50,7 +51,7 @@ func (e *braintreeError) For(item string) errorGroup {
 	}
 }
 
-func (e *braintreeError) On(item string) []FieldError {
+func (e *BraintreeError) On(item string) []FieldError {
 	return []FieldError{}
 }
 

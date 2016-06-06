@@ -2,6 +2,8 @@ package braintree
 
 import (
 	"testing"
+
+	"github.com/lionelbarrow/braintree-go/testhelpers"
 )
 
 // This test will fail unless you set up your Braintree sandbox account correctly. See TESTING.md for details.
@@ -51,9 +53,11 @@ func TestCustomer(t *testing.T) {
 	}
 
 	// Update
+	unique := testhelpers.RandomString()
+	newFirstName := "John" + unique
 	c2, err := testGateway.Customer().Update(&Customer{
 		Id:        customer.Id,
-		FirstName: "John",
+		FirstName: newFirstName,
 	})
 
 	t.Log(c2)
@@ -61,7 +65,7 @@ func TestCustomer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if c2.FirstName != "John" {
+	if c2.FirstName != newFirstName {
 		t.Fatal("first name not changed")
 	}
 
@@ -75,6 +79,21 @@ func TestCustomer(t *testing.T) {
 	}
 	if c3.Id != customer.Id {
 		t.Fatal("ids do not match")
+	}
+
+	// Search
+	query := new(SearchQuery)
+	f := query.AddTextField("first-name")
+	f.Is = newFirstName
+	searchResult, err := testGateway.Customer().Search(query)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(searchResult.Customers) == 0 {
+		t.Fatal("could not search for a customer")
+	}
+	if id := searchResult.Customers[0].Id; id != customer.Id {
+		t.Fatalf("id from search does not match: got %s, wanted %s", id, customer.Id)
 	}
 
 	// Delete
